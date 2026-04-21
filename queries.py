@@ -54,3 +54,25 @@ for row in rows:
     print(row)
 
 conn.close()
+
+# Create users table
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'attendant'
+)
+''')
+
+# Insert users (using INSERT OR IGNORE to avoid duplicates if run again)
+cursor.execute('INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)', ('admin', 'admin123', 'admin'))
+cursor.execute('INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)', ('fatuma', 'pass456', 'attendant'))
+cursor.execute('INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)', ('wasswa', 'pass789', 'manager'))
+conn.commit()
+
+# Verify users
+print("\n=== Users Table ===")
+users = cursor.execute('SELECT * FROM users').fetchall()
+for user in users:
+    print(f"ID: {user[0]}, Username: {user[1]}, Password: {user[2]}, Role: {user[3]}")
