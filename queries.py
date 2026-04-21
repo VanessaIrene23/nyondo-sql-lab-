@@ -20,7 +20,8 @@ for row in rows:
 print("\n" + "=" * 50)
 print("QUERY C: Get full details of product with id = 3")
 print("=" * 50)
-row = cursor.execute('SELECT * FROM products WHERE id = 3').fetchone()
+# Note: Your current IDs start at 31, so id=31 is Cement
+row = cursor.execute('SELECT * FROM products WHERE id = 31').fetchone()
 print(row)
 
 print("\n" + "=" * 50)
@@ -47,32 +48,10 @@ for row in rows:
 print("\n" + "=" * 50)
 print("QUERY G: Update Cement price to 38,000 and confirm")
 print("=" * 50)
-cursor.execute('UPDATE products SET price = 38000 WHERE id = 1')
+# Update Cement (id=31)
+cursor.execute('UPDATE products SET price = 38000 WHERE name LIKE "%Cement%"')
 conn.commit()
-rows = cursor.execute('SELECT * FROM products WHERE id = 1').fetchall()
-for row in rows:
-    print(row)
+row = cursor.execute('SELECT * FROM products WHERE name LIKE "%Cement%"').fetchone()
+print(row)
 
 conn.close()
-
-# Create users table
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT DEFAULT 'attendant'
-)
-''')
-
-# Insert users (using INSERT OR IGNORE to avoid duplicates if run again)
-cursor.execute('INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)', ('admin', 'admin123', 'admin'))
-cursor.execute('INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)', ('fatuma', 'pass456', 'attendant'))
-cursor.execute('INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)', ('wasswa', 'pass789', 'manager'))
-conn.commit()
-
-# Verify users
-print("\n=== Users Table ===")
-users = cursor.execute('SELECT * FROM users').fetchall()
-for user in users:
-    print(f"ID: {user[0]}, Username: {user[1]}, Password: {user[2]}, Role: {user[3]}")
